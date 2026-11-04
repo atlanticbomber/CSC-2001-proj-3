@@ -34,7 +34,7 @@ public class Huffman {
      */
     public static int[] cntFreq(String filename) throws IOException {
         int[] freq = new int[NUM_CHARS];
-        // TODO: implement
+        // TODO: (Tamir)
         return freq;
     }
 
@@ -53,7 +53,7 @@ public class Huffman {
      *    character (no combine() call needed).
      */
     public static HuffmanNode createHuffTree(int[] freq) {
-        // TODO: implement
+        // TODO: implement (Henry)
         return null;
     }
 
@@ -72,7 +72,7 @@ public class Huffman {
     public static String[] createCode(HuffmanTree root) {
         String[] codes = new String[NUM_CHARS];
         Arrays.fill(codes, "");
-        // TODO: implement
+        // TODO: implement (Tamir)
         return codes;
     }
 
@@ -85,7 +85,7 @@ public class Huffman {
      * Example: for the text "aaabbbbcc" this returns "97 3 98 4 99 2".
      */
     public static String createHeader(int[] freq) {
-        // TODO: implement
+        // TODO: implement (Tamir)
         return "";
     }
 
@@ -103,7 +103,7 @@ public class Huffman {
      *    header line (e.g. "97 5") and nothing else - no second line of code bits.
      */
     public static void huffmanEncode(String inFile, String outFile) throws IOException {
-        // TODO: implement
+        // TODO: implement (Henry)
     }
 
     /**
@@ -115,7 +115,7 @@ public class Huffman {
      */
     public static int[] parseHeader(String headerString) {
         int[] freq = new int[NUM_CHARS];
-        // TODO: implement
+        // TODO: implement (Henry)
         return freq;
     }
 
@@ -135,6 +135,6 @@ public class Huffman {
      * so write it out that many times directly.
      */
     public static void huffmanDecode(String encodedFile, String decodeFile) throws IOException {
-        // TODO: implement
+        // TODO: implement (Tamir)
     }
 }
