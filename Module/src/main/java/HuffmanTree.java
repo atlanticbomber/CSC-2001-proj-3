@@ -20,6 +20,11 @@ public interface HuffmanTree extends Comparable<HuffmanTree> {
      */
     public HuffmanTree combine(HuffmanTree other);
 
+    public int freq();
+    public int charAscii();
+
+    public
+
     /**
      * Natural ordering consistent with comesBefore(), so that HuffmanNode
      * objects can be stored directly in a sorted structure (e.g. a

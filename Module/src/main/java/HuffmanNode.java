@@ -13,17 +13,22 @@ public record HuffmanNode(int charAscii, int freq, HuffmanTree left, HuffmanTree
         implements HuffmanTree{
 
      public boolean comesBefore(HuffmanTree other) {
-        // TODO: implement
-        return false;
+         if (this.freq() < other.freq()) {
+             return true;
+         }
+         else if (this.freq() == other.freq()) {
+             return (this.charAscii() < other.charAscii());
+         }
+         return false;
     }
 
     public HuffmanTree combine(HuffmanTree other) {
-        // TODO: implement
-        return null;
+         int newCount = this.freq() + other.freq();
+         return null;
     }
 
     /**
-     * Natural ordering consistent with comesBefore(), so that HuffmanNode
+     * Natural ordering consistent with comesBefore(), so other HuffmanNode
      * objects can be stored directly in a sorted structure (e.g. a
      * PriorityQueue or a sorted List) while building the tree.
      */
