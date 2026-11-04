@@ -11,7 +11,10 @@
  */
 public record HuffmanNode(int charAscii, int freq, HuffmanTree left, HuffmanTree right)
      implements HuffmanTree{
-
+     public HuffmanNode genNew() {
+         return new HuffmanNode(0, 0, null, null);
+     }
+     // returns true if this is less than other, otherwise false
      public boolean comesBefore(HuffmanTree other) {
          if (this.freq() < other.freq()) {
              return true;
@@ -21,13 +24,24 @@ public record HuffmanNode(int charAscii, int freq, HuffmanTree left, HuffmanTree
          }
          return false;
     }
-
-    public HuffmanTree combine(HuffmanTree other) {
+    // combines this node with passed in node, taking minimum of the char as the new char, smaller on left and larger on right
+    public HuffmanNode combine(HuffmanTree other) {
          int newCount = this.freq() + other.freq();
-         if (this.comesBefore(other)) {
-             HuffmanNode huss = new HuffmanNode(, newCount, this, other);
+         int min;
+         HuffmanNode huss = genNew();
+         if (this.charAscii() < other.charAscii()) {
+             min = this.charAscii();
          }
-         return null;
+         else {
+             min = other.charAscii();
+         }
+         if (this.comesBefore(other)) {
+             huss = new HuffmanNode(min, newCount, this, other);
+         }
+         else if (other.comesBefore(this)) {
+             huss = new HuffmanNode(min, newCount, other, this);
+         }
+         return huss;
     }
 
     /**

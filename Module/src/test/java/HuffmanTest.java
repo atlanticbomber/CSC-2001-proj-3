@@ -44,6 +44,19 @@ public class HuffmanTest {
         assertTrue(compareFiles("file1_out.txt", "file1_soln.txt"));
     }
 
+    @Test
+    public void HuffmanNodeTest() {
+        HuffmanNode d = new HuffmanNode(5, 'd', null, null);
+        HuffmanNode k = new HuffmanNode(5, 'k', null, null);
+        assertTrue(d.comesBefore(k));
+        assertFalse(k.comesBefore(k));
+
+        HuffmanNode a = new HuffmanNode(3, 'a', null, null);
+        HuffmanNode b = new HuffmanNode(10, 'b', null, null);
+        assertTrue(a.comesBefore(b));
+    }
+
+
     /**
      * Compares two files line by line, trimming trailing CR/LF so the
      * comparison works the same on Windows and Unix-style line endings.
