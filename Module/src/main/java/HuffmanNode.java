@@ -10,7 +10,7 @@
  * equals()/hashCode()/toString(). Do not rename the components below.
  */
 public record HuffmanNode(int charAscii, int freq, HuffmanTree left, HuffmanTree right)
-        implements HuffmanTree{
+     implements HuffmanTree{
 
      public boolean comesBefore(HuffmanTree other) {
          if (this.freq() < other.freq()) {
@@ -24,6 +24,9 @@ public record HuffmanNode(int charAscii, int freq, HuffmanTree left, HuffmanTree
 
     public HuffmanTree combine(HuffmanTree other) {
          int newCount = this.freq() + other.freq();
+         if (this.comesBefore(other)) {
+             HuffmanNode huss = new HuffmanNode(, newCount, this, other);
+         }
          return null;
     }
 
