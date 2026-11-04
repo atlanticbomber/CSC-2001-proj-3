@@ -3,8 +3,6 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,14 +44,23 @@ public class HuffmanTest {
 
     @Test
     public void HuffmanNodeTest() {
-        HuffmanNode d = new HuffmanNode(5, 'd', null, null);
-        HuffmanNode k = new HuffmanNode(5, 'k', null, null);
+        HuffmanTree d = new HuffmanLeaf(5, 'd');
+        HuffmanTree k = new HuffmanLeaf(5, 'k');
         assertTrue(d.comesBefore(k));
         assertFalse(k.comesBefore(k));
 
-        HuffmanNode a = new HuffmanNode(3, 'a', null, null);
-        HuffmanNode b = new HuffmanNode(10, 'b', null, null);
+        HuffmanTree a = new HuffmanLeaf(3, 'a');
+        HuffmanTree b = new HuffmanLeaf(10, 'b');
         assertTrue(a.comesBefore(b));
+    }
+
+    @Test
+    public void combineTest() {
+        HuffmanTree d = new HuffmanLeaf(5, 'd');
+        HuffmanTree k = new HuffmanLeaf(5, 'k');
+        assertEquals(k.combine(d),d.combine(k));
+        HuffmanTree k2 = new HuffmanLeaf(5, 'k');
+        assertNotEquals(k.combine(k2),k2.combine(k));
     }
 
 

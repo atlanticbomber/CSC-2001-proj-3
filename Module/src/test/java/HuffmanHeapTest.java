@@ -11,8 +11,7 @@ public class HuffmanHeapTest {
         Random rand = new Random("Henry Mitchell".hashCode());
         HQueue testQueue = new HuffmanArrayHeap();
         for (int i = 0; i < 1000000; i++) {
-            testQueue.enqueue(new HuffmanNode(rand.nextInt(256), rand.nextInt(256),
-                        null,null));
+            testQueue.enqueue(new HuffmanLeaf(rand.nextInt(256), rand.nextInt(256)));
         }
         assertFalse(testQueue.isEmpty());
         while (testQueue.count() > 1) {
@@ -21,6 +20,6 @@ public class HuffmanHeapTest {
         testQueue.dequeue();
         assertTrue(testQueue.isEmpty());
         assertNull(testQueue.peek());
-        assertThrows(NoSuchElementException.class, () -> testQueue.dequeue());
+        assertThrows(NoSuchElementException.class, testQueue::dequeue);
     }
 }
