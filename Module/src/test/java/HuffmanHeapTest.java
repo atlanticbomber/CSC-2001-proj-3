@@ -19,7 +19,7 @@ public class HuffmanHeapTest {
         }
         testQueue.dequeue();
         assertTrue(testQueue.isEmpty());
-        assertNull(testQueue.peek());
+        assertThrows(NoSuchElementException.class, testQueue::peek);
         assertThrows(NoSuchElementException.class, testQueue::dequeue);
     }
 }

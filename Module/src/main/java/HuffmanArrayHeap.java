@@ -41,7 +41,7 @@ public class HuffmanArrayHeap implements HQueue {
      */
     @Override
     public HuffmanTree dequeue() {
-        if(size==0) {
+        if(isEmpty()) {
             throw new NoSuchElementException();
         }
         HuffmanTree result = elements[0];
@@ -106,7 +106,7 @@ public class HuffmanArrayHeap implements HQueue {
      * returns but does not remove the smallest element in the heap
      */
     public HuffmanTree peek() {
-        if(isEmpty()) return null;
+        if(isEmpty()) throw new NoSuchElementException();
         return elements[0];
     }
 }
