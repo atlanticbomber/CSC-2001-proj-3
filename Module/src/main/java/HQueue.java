@@ -18,5 +18,8 @@ public interface HQueue {
      * dequeue and return the highest-priority tree
      */
     HuffmanTree dequeue();
-
+ /**
+  * returns but does not remove the smallest element in the heap
+  */
+ public HuffmanTree peek();
 }

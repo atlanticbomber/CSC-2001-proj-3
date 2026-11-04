@@ -1,0 +1,2 @@
+11/3/26 (Tamir): Created HuffmanArrayHeap. This class implements HQueue as an Array-Backed Min Heap.
+    test ensures that the heap maintains its sorted nature while iterating through a large number of elements
