@@ -34,7 +34,11 @@ public class Huffman {
      */
     public static int[] cntFreq(String filename) throws IOException {
         int[] freq = new int[NUM_CHARS];
-        // TODO: (Tamir)
+        File file = new File(filename);
+        FileReader reader = new FileReader(file);
+        while (reader.ready()) {
+            freq[reader.read()]++;
+        }
         return freq;
     }
 
@@ -52,7 +56,7 @@ public class Huffman {
      *    one unique character), return a single leaf HuffmanNode for that
      *    character (no combine() call needed).
      */
-    public static HuffmanNode createHuffTree(int[] freq) {
+    public static HuffmanTree createHuffTree(int[] freq) {
         // TODO: implement (Henry)
         return null;
     }
@@ -72,8 +76,18 @@ public class Huffman {
     public static String[] createCode(HuffmanTree root) {
         String[] codes = new String[NUM_CHARS];
         Arrays.fill(codes, "");
-        // TODO: implement (Tamir)
+        codeCreationHelper(root, codes, "");
         return codes;
+    }
+    //recursive helper method to create codes
+    public static void codeCreationHelper(HuffmanTree tree, String[] codes, String currentCode) {
+        if(tree instanceof HuffmanLeaf leaf) {
+            codes[leaf.charAscii()] = currentCode;
+        }
+        else if(tree instanceof HuffmanNode node) {
+            codeCreationHelper(node.left(),codes,currentCode+"0");
+            codeCreationHelper(node.right(),codes,currentCode+"1");
+        }
     }
 
     /**
@@ -85,8 +99,12 @@ public class Huffman {
      * Example: for the text "aaabbbbcc" this returns "97 3 98 4 99 2".
      */
     public static String createHeader(int[] freq) {
-        // TODO: implement (Tamir)
-        return "";
+        String result = "";
+        for (int i = 0; i < freq.length; i++) {
+            if(freq[i] > 0)
+                result += i + " " + freq[i] + " ";
+        }
+        return result;
     }
 
     /**
