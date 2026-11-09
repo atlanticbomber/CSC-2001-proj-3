@@ -153,6 +153,29 @@ public class Huffman {
      * so write it out that many times directly.
      */
     public static void huffmanDecode(String encodedFile, String decodeFile) throws IOException {
-        // TODO: implement (Tamir)
+        try(FileWriter decoder = new FileWriter(decodeFile); FileReader input = new FileReader(encodedFile)) {
+            String fullText = input.readAllAsString();
+            String header = fullText.substring(0, fullText.indexOf('\n'));
+            if (!header.isEmpty())  { //not empty file case
+                HuffmanTree tree = createHuffTree(parseHeader(header));
+                if (tree instanceof HuffmanLeaf) { //one unique char case
+                    for (int i = 0; i < tree.freq(); i++) {
+                        decoder.write(tree.charAscii());
+                    }
+                } else { //standard case
+                    HuffmanTree root = tree;
+                    String encodedText = fullText.substring(fullText.indexOf('\n') + 1);
+                    for (char c : encodedText.toCharArray()) {
+                        HuffmanNode node = (HuffmanNode) tree;
+                        tree = (c == '0') ? node.left() : node.right();
+                        if (tree instanceof HuffmanLeaf) {
+                            decoder.write(tree.charAscii());
+                            tree = root;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
