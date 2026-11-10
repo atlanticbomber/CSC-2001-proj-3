@@ -1,4 +1,5 @@
-public interface HuffmanTree extends Comparable<HuffmanTree> {
+public sealed interface HuffmanTree extends Comparable<HuffmanTree>
+        permits HuffmanLeaf, HuffmanNode {
     /**
      * Returns true if the tree rooted at node a comes before the tree
      * rooted at node b, false otherwise.

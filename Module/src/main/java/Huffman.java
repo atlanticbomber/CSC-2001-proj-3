@@ -34,7 +34,11 @@ public class Huffman {
      */
     public static int[] cntFreq(String filename) throws IOException {
         int[] freq = new int[NUM_CHARS];
-        // TODO: (Tamir)
+        File file = new File(filename);
+        FileReader reader = new FileReader(file);
+        while (reader.ready()) {
+            freq[reader.read()]++;
+        }
         return freq;
     }
 
@@ -52,7 +56,7 @@ public class Huffman {
      *    one unique character), return a single leaf HuffmanNode for that
      *    character (no combine() call needed).
      */
-    public static HuffmanNode createHuffTree(int[] freq) {
+    public static HuffmanTree createHuffTree(int[] freq) {
         // TODO: implement (Henry)
 
         return null;
@@ -73,8 +77,18 @@ public class Huffman {
     public static String[] createCode(HuffmanTree root) {
         String[] codes = new String[NUM_CHARS];
         Arrays.fill(codes, "");
-        // TODO: implement (Tamir)
+        codeCreationHelper(root, codes, "");
         return codes;
+    }
+    //recursive helper method to create codes
+    public static void codeCreationHelper(HuffmanTree tree, String[] codes, String currentCode) {
+        if(tree instanceof HuffmanLeaf leaf) {
+            codes[leaf.charAscii()] = currentCode;
+        }
+        else if(tree instanceof HuffmanNode node) {
+            codeCreationHelper(node.left(),codes,currentCode+"0");
+            codeCreationHelper(node.right(),codes,currentCode+"1");
+        }
     }
 
     /**
@@ -86,8 +100,12 @@ public class Huffman {
      * Example: for the text "aaabbbbcc" this returns "97 3 98 4 99 2".
      */
     public static String createHeader(int[] freq) {
-        // TODO: implement (Tamir)
-        return "";
+        String result = "";
+        for (int i = 0; i < freq.length; i++) {
+            if(freq[i] > 0)
+                result += i + " " + freq[i] + " ";
+        }
+        return result;
     }
 
     /**
@@ -136,6 +154,29 @@ public class Huffman {
      * so write it out that many times directly.
      */
     public static void huffmanDecode(String encodedFile, String decodeFile) throws IOException {
-        // TODO: implement (Tamir)
+        try(FileWriter decoder = new FileWriter(decodeFile); FileReader input = new FileReader(encodedFile)) {
+            String fullText = input.readAllAsString();
+            String header = fullText.substring(0, fullText.indexOf('\n'));
+            if (!header.isEmpty())  { //not empty file case
+                HuffmanTree tree = createHuffTree(parseHeader(header));
+                if (tree instanceof HuffmanLeaf) { //one unique char case
+                    for (int i = 0; i < tree.freq(); i++) {
+                        decoder.write(tree.charAscii());
+                    }
+                } else { //standard case
+                    HuffmanTree root = tree;
+                    String encodedText = fullText.substring(fullText.indexOf('\n') + 1);
+                    for (char c : encodedText.toCharArray()) {
+                        HuffmanNode node = (HuffmanNode) tree;
+                        tree = (c == '0') ? node.left() : node.right();
+                        if (tree instanceof HuffmanLeaf) {
+                            decoder.write(tree.charAscii());
+                            tree = root;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
