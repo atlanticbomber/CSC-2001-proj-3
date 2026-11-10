@@ -57,9 +57,22 @@ public class Huffman {
      *    character (no combine() call needed).
      */
     public static HuffmanTree createHuffTree(int[] freq) {
-        // TODO: implement (Henry)
-
-        return null;
+        HQueue q = new HuffmanArrayHeap();
+        for (int i = 0; i < freq.length; i++) {
+            if (freq[i] > 0) {
+                q.enqueue(new HuffmanLeaf(freq[i], i));
+            }
+        }
+        if (q.isEmpty()) {
+            return null;
+        }
+        while (q.count() > 1) {
+            HuffmanTree t1 = q.dequeue();
+            HuffmanTree t2 = q.dequeue();
+            HuffmanTree t3 = t1.combine(t2);
+            q.enqueue(t3);
+        }
+        return q.dequeue();
     }
 
     /**

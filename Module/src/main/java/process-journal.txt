@@ -7,3 +7,5 @@
 
 11/8/26 8pm (Tamir): implemented cntFreq, createCode, and createHeader. added codeCreationHelper to use as a recursive method
 11/9/26 11am (Tamir): implemented decodeFile. Sealed the HuffmanTree interface to appease the java overlords
+
+11/10/26 2pm (Henry): implemented createHuffTree()
