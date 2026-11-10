@@ -54,6 +54,7 @@ public class Huffman {
      */
     public static HuffmanNode createHuffTree(int[] freq) {
         // TODO: implement (Henry)
+
         return null;
     }
 
