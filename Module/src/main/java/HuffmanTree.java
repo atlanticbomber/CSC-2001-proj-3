@@ -35,10 +35,10 @@ public sealed interface HuffmanTree extends Comparable<HuffmanTree>
         HuffmanNode huss;
         min = Math.min(this.charAscii(), other.charAscii());
         if (this.comesBefore(other)) {
-            huss = new HuffmanNode(min, newCount, this, other);
+            huss = new HuffmanNode(newCount, min, this, other);
         }
         else {
-            huss = new HuffmanNode(min, newCount, other, this);
+            huss = new HuffmanNode(newCount, min, other, this);
         }
         return huss;
     }

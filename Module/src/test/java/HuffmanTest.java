@@ -33,13 +33,58 @@ public class HuffmanTest {
     @Test
     public void testCreateHeader() throws IOException {
         int[] freqList = Huffman.cntFreq("file2.txt");
-        assertEquals("97 2 98 4 99 8 100 16 102 2", Huffman.createHeader(freqList));
+        assertEquals("97 2 98 4 99 8 100 16 102 2 \n", Huffman.createHeader(freqList));
     }
 
     @Test
     public void test01Textfile() throws IOException {
         Huffman.huffmanEncode("file1.txt", "file1_out.txt");
         assertTrue(compareFiles("file1_out.txt", "file1_soln.txt"));
+    }
+    @Test
+    public void test02Textfile() throws IOException {
+        Huffman.huffmanEncode("file2.txt", "file2_out.txt");
+        assertTrue(compareFiles("file2_out.txt", "file2_soln.txt"));
+    }
+    @Test
+    public void test0mTextfile() throws IOException {
+        Huffman.huffmanEncode("multiline.txt", "multiline_out.txt");
+        assertTrue(compareFiles("multiline_out.txt", "multiline_soln.txt"));
+    }
+    @Test
+    public void test01bTextfile() throws IOException {
+        Huffman.huffmanDecode("file1_soln.txt", "file1_out.txt");
+        assertTrue(compareFiles("file1_out.txt", "file1.txt"));
+    }
+    @Test
+    public void test02bTextfile() throws IOException {
+        Huffman.huffmanDecode("file2_soln.txt", "file2_out.txt");
+        assertTrue(compareFiles("file2_out.txt", "file2.txt"));
+    }
+    @Test
+    public void test0mbTextfile() throws IOException {
+        Huffman.huffmanDecode("multiline_soln.txt", "multiline_out.txt");
+        assertTrue(compareFiles("multiline_out.txt", "multiline.txt"));
+    }
+    @Test
+    void oneCharTestEnc() throws IOException {
+        Huffman.huffmanEncode("oneChar.txt", "oneChar_out.txt");
+        assertTrue(compareFiles("oneChar_out.txt", "oneChar_soln.txt"));
+    }
+    @Test
+    void oneCharTestDec() throws IOException {
+        Huffman.huffmanDecode("oneChar_soln.txt", "oneChar_out.txt");
+        assertTrue(compareFiles("oneChar_out.txt", "oneChar.txt"));
+    }
+    @Test
+    void emptyTestEnc() throws IOException {
+        Huffman.huffmanEncode("empty.txt", "empty_out.txt");
+        assertTrue(compareFiles("empty_out.txt", "empty_soln.txt"));
+    }
+    @Test
+    void emptyTestDec() throws IOException {
+        Huffman.huffmanDecode("empty_soln.txt", "empty_out.txt");
+        assertTrue(compareFiles("empty_out.txt", "empty.txt"));
     }
 
     @Test
@@ -60,7 +105,7 @@ public class HuffmanTest {
         HuffmanTree k = new HuffmanLeaf(5, 'k');
         assertEquals(k.combine(d),d.combine(k));
         HuffmanTree k2 = new HuffmanLeaf(5, 'k');
-        assertNotEquals(k.combine(k2),k2.combine(k));
+        assertEquals(k.combine(k2),k2.combine(k));
     }
 
 

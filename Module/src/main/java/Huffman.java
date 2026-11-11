@@ -118,7 +118,7 @@ public class Huffman {
             if(freq[i] > 0)
                 result += i + " " + freq[i] + " ";
         }
-        return result;
+        return result+"\n";
     }
 
     /**
@@ -147,7 +147,6 @@ public class Huffman {
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(outFile))) {
             out.write(header);
-            out.write('\n');
 
             if (root instanceof HuffmanLeaf) {
                 return;
@@ -171,9 +170,6 @@ public class Huffman {
      */
     public static int[] parseHeader(String headerString) {
         int[] freq = new int[NUM_CHARS];
-        if (headerString.isEmpty()) {
-            return freq;
-        }
         String[] parts = headerString.trim().split("\\s+");
         for (int i = 0; i < parts.length; i += 2) {
             int a = Integer.parseInt(parts[i]);
@@ -201,8 +197,8 @@ public class Huffman {
     public static void huffmanDecode(String encodedFile, String decodeFile) throws IOException {
         try(FileWriter decoder = new FileWriter(decodeFile); FileReader input = new FileReader(encodedFile)) {
             String fullText = input.readAllAsString();
-            String header = fullText.substring(0, fullText.indexOf('\n'));
-            if (!header.isEmpty())  { //not empty file case
+            if (!fullText.isEmpty())  { //not empty file case
+                String header = fullText.substring(0, fullText.indexOf('\n'));
                 HuffmanTree tree = createHuffTree(parseHeader(header));
                 if (tree instanceof HuffmanLeaf) { //one unique char case
                     for (int i = 0; i < tree.freq(); i++) {
