@@ -9,3 +9,5 @@
 11/9/26 11am (Tamir): implemented decodeFile. Sealed the HuffmanTree interface to appease the java overlords
 
 11/10/26 2pm (Henry): implemented createHuffTree()
+11/10/26 5pm (Henry): implemented huffmanEncode()
+11/10/26 11pm (Henry): implemented parseHeader()

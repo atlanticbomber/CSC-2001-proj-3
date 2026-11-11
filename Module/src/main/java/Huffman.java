@@ -135,7 +135,31 @@ public class Huffman {
      *    header line (e.g. "97 5") and nothing else - no second line of code bits.
      */
     public static void huffmanEncode(String inFile, String outFile) throws IOException {
-        // TODO: implement (Henry)
+        int[] freq = cntFreq(inFile);
+        HuffmanTree root = createHuffTree(freq);
+
+        if (root == null) {
+            try (BufferedWriter out = new BufferedWriter(new FileWriter(outFile))) {}
+            return;
+        }
+        String[] codes = createCode(root);
+        String header = createHeader(freq);
+
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(outFile))) {
+            out.write(header);
+            out.write('\n');
+
+            if (root instanceof HuffmanLeaf) {
+                return;
+            }
+            try (BufferedReader in = new BufferedReader(new FileReader(inFile))) {
+
+                int ch;
+                while ((ch = in.read()) != -1) {
+                    out.write(codes[ch]);
+                }
+            }
+        }
     }
 
     /**
@@ -147,7 +171,15 @@ public class Huffman {
      */
     public static int[] parseHeader(String headerString) {
         int[] freq = new int[NUM_CHARS];
-        // TODO: implement (Henry)
+        if (headerString.isEmpty()) {
+            return freq;
+        }
+        String[] parts = headerString.trim().split("\\s+");
+        for (int i = 0; i < parts.length; i += 2) {
+            int a = Integer.parseInt(parts[i]);
+            int c = Integer.parseInt(parts[i + 1]);
+            freq[a] = c;
+        }
         return freq;
     }
 
