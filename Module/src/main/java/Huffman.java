@@ -16,8 +16,8 @@ import java.util.*;
  *    each), not as packed bits, so the "encoded" file will actually be
  *    larger than the original -- that's expected for this assignment.
  *  - createHuffTree() is built on top of addNode()/removeMin(), which
- *    operate generically over a java.util.Collection<HuffmanNode>.
- *  - HuffmanNode is a record, so its components are read with
+ *    operate generically over a java.util.Collection<Huffman.HuffmanTree.HuffmanNode>.
+ *  - Huffman.HuffmanTree.HuffmanNode is a record, so its components are read with
  *    node.charAscii(), node.freq(), node.left(), and node.right() -- no
  *    "get" prefix.
  */
@@ -45,22 +45,22 @@ public class Huffman {
 
     /**
      * Builds a Huffman tree from an array of character frequencies (as
-     * produced by cntFreq()) and returns the root HuffmanNode of the tree.
+     * produced by cntFreq()) and returns the root Huffman.HuffmanTree.HuffmanNode of the tree.
      *
-     * Use an HQueue to manage the collection of
+     * Use an Huffman.HQueue to manage the collection of
      * not-yet-combined nodes as you build the tree.
      *
      * Special cases:
      *  - If freq contains no non-zero counts (empty input file), return null
      *  - If freq contains exactly one non-zero count (input file has only
-     *    one unique character), return a single leaf HuffmanNode for that
+     *    one unique character), return a single leaf Huffman.HuffmanTree.HuffmanNode for that
      *    character (no combine() call needed).
      */
     public static HuffmanTree createHuffTree(int[] freq) {
-        HQueue q = new HuffmanArrayHeap();
+        HQueue q = new HQueue.HuffmanArrayHeap();
         for (int i = 0; i < freq.length; i++) {
             if (freq[i] > 0) {
-                q.enqueue(new HuffmanLeaf(freq[i], i));
+                q.enqueue(new HuffmanTree.HuffmanLeaf(freq[i], i));
             }
         }
         if (q.isEmpty()) {
@@ -95,10 +95,10 @@ public class Huffman {
     }
     //recursive helper method to create codes
     public static void codeCreationHelper(HuffmanTree tree, String[] codes, String currentCode) {
-        if(tree instanceof HuffmanLeaf leaf) {
+        if(tree instanceof HuffmanTree.HuffmanLeaf leaf) {
             codes[leaf.charAscii()] = currentCode;
         }
-        else if(tree instanceof HuffmanNode node) {
+        else if(tree instanceof HuffmanTree.HuffmanNode node) {
             codeCreationHelper(node.left(),codes,currentCode+"0");
             codeCreationHelper(node.right(),codes,currentCode+"1");
         }
@@ -148,7 +148,7 @@ public class Huffman {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(outFile))) {
             out.write(header);
 
-            if (root instanceof HuffmanLeaf) {
+            if (root instanceof HuffmanTree.HuffmanLeaf) {
                 return;
             }
             try (BufferedReader in = new BufferedReader(new FileReader(inFile))) {
@@ -200,7 +200,7 @@ public class Huffman {
             if (!fullText.isEmpty())  { //not empty file case
                 String header = fullText.substring(0, fullText.indexOf('\n'));
                 HuffmanTree tree = createHuffTree(parseHeader(header));
-                if (tree instanceof HuffmanLeaf) { //one unique char case
+                if (tree instanceof HuffmanTree.HuffmanLeaf) { //one unique char case
                     for (int i = 0; i < tree.freq(); i++) {
                         decoder.write(tree.charAscii());
                     }
@@ -208,9 +208,9 @@ public class Huffman {
                     HuffmanTree root = tree;
                     String encodedText = fullText.substring(fullText.indexOf('\n') + 1);
                     for (char c : encodedText.toCharArray()) {
-                        HuffmanNode node = (HuffmanNode) tree;
+                        HuffmanTree.HuffmanNode node = (HuffmanTree.HuffmanNode) tree;
                         tree = (c == '0') ? node.left() : node.right();
-                        if (tree instanceof HuffmanLeaf) {
+                        if (tree instanceof HuffmanTree.HuffmanLeaf) {
                             decoder.write(tree.charAscii());
                             tree = root;
                         }
@@ -219,5 +219,220 @@ public class Huffman {
             }
         }
 
+    }
+
+    public sealed static interface HuffmanTree extends Comparable<HuffmanTree>
+            permits HuffmanTree.HuffmanLeaf, HuffmanTree.HuffmanNode {
+        /**
+         * Returns true if the tree rooted at node a comes before the tree
+         * rooted at node b, false otherwise.
+         *
+         * A node "comes before" another if its frequency count is smaller.
+         * Ties are broken using the ASCII value of the character: the node
+         * with the smaller ASCII value comes first.
+         */
+        // returns true if this is less than other, otherwise false
+         default boolean comesBefore(HuffmanTree other) {
+            if (this.freq() < other.freq()) {
+                return true;
+            }
+            else if (this.freq() == other.freq()) {
+                return (this.charAscii() < other.charAscii());
+            }
+            return false;
+        }
+
+        /**
+         * Creates and returns a new internal Huffman.HuffmanTree.HuffmanNode with a and b as its
+         * two children.
+         *
+         * The child for which comesBefore() is true goes on the left, the
+         * other goes on the right. The new node's frequency is the sum of a's
+         * and b's frequencies. The new node's charAscii value is the smaller
+         * of a's and b's charAscii values (used to break ties later on).
+         */
+        // combines this node with passed in node, taking minimum of the char as the new char, smaller on left and larger on right
+         default HuffmanTree combine(HuffmanTree other) {
+            int newCount = this.freq() + other.freq();
+            int min;
+            HuffmanNode huss;
+            min = Math.min(this.charAscii(), other.charAscii());
+            if (this.comesBefore(other)) {
+                huss = new HuffmanNode(newCount, min, this, other);
+            }
+            else {
+                huss = new HuffmanNode(newCount, min, other, this);
+            }
+            return huss;
+        }
+
+        //abstract methods to allow external classes to access shared fields
+         int freq();
+         int charAscii();
+
+        /**
+         * Natural ordering consistent with comesBefore(), so that Huffman.HuffmanTree.HuffmanNode
+         * objects can be stored directly in a sorted structure (e.g. a
+         * PriorityQueue or a sorted List) while building the tree.
+         */
+        @Override
+         default int compareTo(HuffmanTree other) {
+            if (this.comesBefore(other)) return -1;
+            if (other.comesBefore(this)) return 1;
+            return 0;
+        }
+
+        record HuffmanLeaf (int freq, int charAscii) implements HuffmanTree {}
+
+        /**
+         * A single node in a Huffman tree, implemented as a record.
+         *
+         * A Huffman.HuffmanTree.HuffmanNode represents either a leaf (an actual character together
+         * with its occurrence count) or an internal node created by combining two
+         * subtrees during tree construction.
+         *
+         * Records are immutable and give you charAscii(), freq(), left(), and
+         * right() accessor methods automatically, along with
+         * equals()/hashCode()/toString(). Do not rename the components below.
+         */
+        record HuffmanNode(int freq, int charAscii, HuffmanTree left, HuffmanTree right)
+             implements HuffmanTree {}
+    }
+
+    public static interface HQueue {
+       /**
+         * return true if the queue is empty
+         */
+        boolean isEmpty();
+
+        /**
+         * return a count of the number of elements in the queue
+         */
+        int count();
+
+        /**
+         * enqueue a tree
+         */
+        void enqueue(HuffmanTree tree);
+
+        /**
+         * dequeue and return the highest-priority tree
+         */
+        HuffmanTree dequeue();
+     /**
+      * returns but does not remove the smallest element in the heap
+      */
+     public HuffmanTree peek();
+
+     class HuffmanArrayHeap implements HQueue {
+
+         private HuffmanTree[] elements;
+         private int size;
+
+         public HuffmanArrayHeap() {
+             elements = new HuffmanTree[10];
+             size = 0;
+         }
+
+         /**
+          * return true if the queue is empty
+          */
+         @Override
+         public boolean isEmpty() {
+             return size==0;
+         }
+
+         /**
+          * return a count of the number of elements in the queue
+          */
+         @Override
+         public int count() {
+             return size;
+         }
+
+         /**
+          * enqueue a tree
+          */
+         @Override
+         public void enqueue(HuffmanTree tree) {
+             ensureCapacity();
+             elements[size++] = tree;
+             siftUp(size);
+         }
+
+         /**
+          * dequeue and return the highest-priority tree
+          */
+         @Override
+         public HuffmanTree dequeue() {
+             if(isEmpty()) {
+                 throw new NoSuchElementException();
+             }
+             HuffmanTree result = elements[0];
+             elements[0] = elements[--size];
+             siftDown(1);
+             return result;
+         }
+
+         /**
+          * ensures that there is space left in the backing array and doubles its size if there isn't
+          */
+         private void ensureCapacity() {
+             if (size==elements.length) {
+                 HuffmanTree[] newElements = new HuffmanTree[elements.length*2];
+                 for (int i = 0; i < elements.length; i++) {
+                     newElements[i] = elements[i];
+                 }
+                 elements = newElements;
+             }
+         }
+
+         /**
+          * sifts an element up the heap until its parent is smaller
+          */
+         private void siftUp(int index) {
+             int parentIdx = index/2;
+             if(parentIdx > 0 && elements[parentIdx-1].compareTo(elements[index-1]) > 0) {
+                 HuffmanTree temp = elements[index-1];
+                 elements[index-1] = elements[parentIdx-1];
+                 elements[parentIdx-1] = temp;
+                 siftUp(parentIdx);
+             }
+
+         }
+
+         /**
+          * sifts an element down the heap until both of its children are larger
+          */
+         private void siftDown(int index) {
+             int leftIdx = index*2;
+             int rightIdx = leftIdx+1;
+
+             if((leftIdx > size || elements[index-1].compareTo(elements[leftIdx-1]) < 0) &&
+                 (rightIdx > size || elements[index-1].compareTo(elements[rightIdx-1]) < 0)) {
+                 return;
+             }
+             if(elements[leftIdx-1].compareTo(elements[rightIdx-1]) <= 0) {
+                 HuffmanTree temp = elements[leftIdx-1];
+                 elements[leftIdx-1] = elements[index-1];
+                 elements[index-1] = temp;
+                 siftDown(leftIdx);
+             }
+             else {
+                 HuffmanTree temp = elements[rightIdx-1];
+                 elements[rightIdx-1] = elements[index-1];
+                 elements[index-1] = temp;
+                 siftDown(rightIdx);
+             }
+         }
+
+         /**
+          * returns but does not remove the smallest element in the heap
+          */
+         public HuffmanTree peek() {
+             if(isEmpty()) throw new NoSuchElementException();
+             return elements[0];
+         }
+     }
     }
 }

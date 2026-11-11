@@ -1,4 +1,4 @@
-11/3/26 4pm (Tamir): Created HuffmanArrayHeap. This class implements HQueue as an Array-Backed Min Heap.
+11/3/26 4pm (Tamir): Created Huffman.HQueue.HuffmanArrayHeap. This class implements Huffman.HQueue as an Array-Backed Min Heap.
     test ensures that the heap maintains its sorted nature while iterating through a large number of elements
 
 11/3/26 4pm (Henry): created comesBefore() and started on combine().
@@ -6,7 +6,7 @@
 11/3/26 9pm (Henry): finished combine(), added purpose statements and tests for both
 
 11/8/26 8pm (Tamir): implemented cntFreq, createCode, and createHeader. added codeCreationHelper to use as a recursive method
-11/9/26 11am (Tamir): implemented decodeFile. Sealed the HuffmanTree interface to appease the java overlords
+11/9/26 11am (Tamir): implemented decodeFile. Sealed the Huffman.HuffmanTree interface to appease the java overlords
 
 11/10/26 2pm (Henry): implemented createHuffTree()
 11/10/26 5pm (Henry): implemented huffmanEncode()

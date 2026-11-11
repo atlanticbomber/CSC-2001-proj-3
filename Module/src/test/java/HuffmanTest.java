@@ -24,8 +24,8 @@ public class HuffmanTest {
 
     @Test
     public void testComesBefore() {
-        HuffmanLeaf d = new HuffmanLeaf(5, 'd');
-        HuffmanLeaf k = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanTree.HuffmanLeaf d = new Huffman.HuffmanTree.HuffmanLeaf(5, 'd');
+        Huffman.HuffmanTree.HuffmanLeaf k = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
         assertTrue(d.comesBefore(k));
         assertFalse(k.comesBefore(d));
     }
@@ -89,22 +89,22 @@ public class HuffmanTest {
 
     @Test
     public void HuffmanNodeTest() {
-        HuffmanTree d = new HuffmanLeaf(5, 'd');
-        HuffmanTree k = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanTree d = new Huffman.HuffmanTree.HuffmanLeaf(5, 'd');
+        Huffman.HuffmanTree k = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
         assertTrue(d.comesBefore(k));
         assertFalse(k.comesBefore(k));
 
-        HuffmanTree a = new HuffmanLeaf(3, 'a');
-        HuffmanTree b = new HuffmanLeaf(10, 'b');
+        Huffman.HuffmanTree a = new Huffman.HuffmanTree.HuffmanLeaf(3, 'a');
+        Huffman.HuffmanTree b = new Huffman.HuffmanTree.HuffmanLeaf(10, 'b');
         assertTrue(a.comesBefore(b));
     }
 
     @Test
     public void combineTest() {
-        HuffmanTree d = new HuffmanLeaf(5, 'd');
-        HuffmanTree k = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanTree d = new Huffman.HuffmanTree.HuffmanLeaf(5, 'd');
+        Huffman.HuffmanTree k = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
         assertEquals(k.combine(d),d.combine(k));
-        HuffmanTree k2 = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanTree k2 = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
         assertEquals(k.combine(k2),k2.combine(k));
     }
 
