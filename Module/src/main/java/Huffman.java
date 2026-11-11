@@ -16,8 +16,8 @@ import java.util.*;
  *    each), not as packed bits, so the "encoded" file will actually be
  *    larger than the original -- that's expected for this assignment.
  *  - createHuffTree() is built on top of addNode()/removeMin(), which
- *    operate generically over a java.util.Collection<Huffman.HuffmanTree.HuffmanNode>.
- *  - Huffman.HuffmanTree.HuffmanNode is a record, so its components are read with
+ *    operate generically over a java.util.Collection<Huffman.HuffmanNode>.
+ *  - Huffman.HuffmanNode is a record, so its components are read with
  *    node.charAscii(), node.freq(), node.left(), and node.right() -- no
  *    "get" prefix.
  */
@@ -45,7 +45,7 @@ public class Huffman {
 
     /**
      * Builds a Huffman tree from an array of character frequencies (as
-     * produced by cntFreq()) and returns the root Huffman.HuffmanTree.HuffmanNode of the tree.
+     * produced by cntFreq()) and returns the root Huffman.HuffmanNode of the tree.
      *
      * Use an Huffman.HQueue to manage the collection of
      * not-yet-combined nodes as you build the tree.
@@ -53,14 +53,14 @@ public class Huffman {
      * Special cases:
      *  - If freq contains no non-zero counts (empty input file), return null
      *  - If freq contains exactly one non-zero count (input file has only
-     *    one unique character), return a single leaf Huffman.HuffmanTree.HuffmanNode for that
+     *    one unique character), return a single leaf Huffman.HuffmanNode for that
      *    character (no combine() call needed).
      */
     public static HuffmanTree createHuffTree(int[] freq) {
         HQueue q = new HQueue.HuffmanArrayHeap();
         for (int i = 0; i < freq.length; i++) {
             if (freq[i] > 0) {
-                q.enqueue(new HuffmanTree.HuffmanLeaf(freq[i], i));
+                q.enqueue(new HuffmanLeaf(freq[i], i));
             }
         }
         if (q.isEmpty()) {
@@ -95,10 +95,11 @@ public class Huffman {
     }
     //recursive helper method to create codes
     public static void codeCreationHelper(HuffmanTree tree, String[] codes, String currentCode) {
-        if(tree instanceof HuffmanTree.HuffmanLeaf leaf) {
+        if(tree instanceof HuffmanLeaf leaf) {
             codes[leaf.charAscii()] = currentCode;
         }
-        else if(tree instanceof HuffmanTree.HuffmanNode node) {
+        else  {
+            HuffmanNode node = (HuffmanNode) tree;
             codeCreationHelper(node.left(),codes,currentCode+"0");
             codeCreationHelper(node.right(),codes,currentCode+"1");
         }
@@ -148,7 +149,7 @@ public class Huffman {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(outFile))) {
             out.write(header);
 
-            if (root instanceof HuffmanTree.HuffmanLeaf) {
+            if (root instanceof HuffmanLeaf) {
                 return;
             }
             try (BufferedReader in = new BufferedReader(new FileReader(inFile))) {
@@ -200,7 +201,7 @@ public class Huffman {
             if (!fullText.isEmpty())  { //not empty file case
                 String header = fullText.substring(0, fullText.indexOf('\n'));
                 HuffmanTree tree = createHuffTree(parseHeader(header));
-                if (tree instanceof HuffmanTree.HuffmanLeaf) { //one unique char case
+                if (tree instanceof HuffmanLeaf) { //one unique char case
                     for (int i = 0; i < tree.freq(); i++) {
                         decoder.write(tree.charAscii());
                     }
@@ -208,9 +209,9 @@ public class Huffman {
                     HuffmanTree root = tree;
                     String encodedText = fullText.substring(fullText.indexOf('\n') + 1);
                     for (char c : encodedText.toCharArray()) {
-                        HuffmanTree.HuffmanNode node = (HuffmanTree.HuffmanNode) tree;
+                        HuffmanNode node = (HuffmanNode) tree;
                         tree = (c == '0') ? node.left() : node.right();
-                        if (tree instanceof HuffmanTree.HuffmanLeaf) {
+                        if (tree instanceof HuffmanLeaf) {
                             decoder.write(tree.charAscii());
                             tree = root;
                         }
@@ -221,83 +222,7 @@ public class Huffman {
 
     }
 
-    public sealed static interface HuffmanTree extends Comparable<HuffmanTree>
-            permits HuffmanTree.HuffmanLeaf, HuffmanTree.HuffmanNode {
-        /**
-         * Returns true if the tree rooted at node a comes before the tree
-         * rooted at node b, false otherwise.
-         *
-         * A node "comes before" another if its frequency count is smaller.
-         * Ties are broken using the ASCII value of the character: the node
-         * with the smaller ASCII value comes first.
-         */
-        // returns true if this is less than other, otherwise false
-         default boolean comesBefore(HuffmanTree other) {
-            if (this.freq() < other.freq()) {
-                return true;
-            }
-            else if (this.freq() == other.freq()) {
-                return (this.charAscii() < other.charAscii());
-            }
-            return false;
-        }
-
-        /**
-         * Creates and returns a new internal Huffman.HuffmanTree.HuffmanNode with a and b as its
-         * two children.
-         *
-         * The child for which comesBefore() is true goes on the left, the
-         * other goes on the right. The new node's frequency is the sum of a's
-         * and b's frequencies. The new node's charAscii value is the smaller
-         * of a's and b's charAscii values (used to break ties later on).
-         */
-        // combines this node with passed in node, taking minimum of the char as the new char, smaller on left and larger on right
-         default HuffmanTree combine(HuffmanTree other) {
-            int newCount = this.freq() + other.freq();
-            int min;
-            HuffmanNode huss;
-            min = Math.min(this.charAscii(), other.charAscii());
-            if (this.comesBefore(other)) {
-                huss = new HuffmanNode(newCount, min, this, other);
-            }
-            else {
-                huss = new HuffmanNode(newCount, min, other, this);
-            }
-            return huss;
-        }
-
-        //abstract methods to allow external classes to access shared fields
-         int freq();
-         int charAscii();
-
-        /**
-         * Natural ordering consistent with comesBefore(), so that Huffman.HuffmanTree.HuffmanNode
-         * objects can be stored directly in a sorted structure (e.g. a
-         * PriorityQueue or a sorted List) while building the tree.
-         */
-        @Override
-         default int compareTo(HuffmanTree other) {
-            if (this.comesBefore(other)) return -1;
-            if (other.comesBefore(this)) return 1;
-            return 0;
-        }
-
-        record HuffmanLeaf (int freq, int charAscii) implements HuffmanTree {}
-
-        /**
-         * A single node in a Huffman tree, implemented as a record.
-         *
-         * A Huffman.HuffmanTree.HuffmanNode represents either a leaf (an actual character together
-         * with its occurrence count) or an internal node created by combining two
-         * subtrees during tree construction.
-         *
-         * Records are immutable and give you charAscii(), freq(), left(), and
-         * right() accessor methods automatically, along with
-         * equals()/hashCode()/toString(). Do not rename the components below.
-         */
-        record HuffmanNode(int freq, int charAscii, HuffmanTree left, HuffmanTree right)
-             implements HuffmanTree {}
-    }
+    
 
     public static interface HQueue {
        /**

@@ -11,3 +11,4 @@
 11/10/26 2pm (Henry): implemented createHuffTree()
 11/10/26 5pm (Henry): implemented huffmanEncode()
 11/10/26 11pm (Henry): implemented parseHeader()
+11/11/ 3pm (Tamir): last few bugs and trying to format the project in a way that the autograder will accept

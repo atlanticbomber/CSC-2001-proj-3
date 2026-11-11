@@ -3,6 +3,8 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,8 +26,8 @@ public class HuffmanTest {
 
     @Test
     public void testComesBefore() {
-        Huffman.HuffmanTree.HuffmanLeaf d = new Huffman.HuffmanTree.HuffmanLeaf(5, 'd');
-        Huffman.HuffmanTree.HuffmanLeaf k = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
+        HuffmanLeaf d = new HuffmanLeaf(5, 'd');
+        HuffmanLeaf k = new HuffmanLeaf(5, 'k');
         assertTrue(d.comesBefore(k));
         assertFalse(k.comesBefore(d));
     }
@@ -89,25 +91,40 @@ public class HuffmanTest {
 
     @Test
     public void HuffmanNodeTest() {
-        Huffman.HuffmanTree d = new Huffman.HuffmanTree.HuffmanLeaf(5, 'd');
-        Huffman.HuffmanTree k = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
+        HuffmanTree d = new HuffmanLeaf(5, 'd');
+        HuffmanTree k = new HuffmanLeaf(5, 'k');
         assertTrue(d.comesBefore(k));
         assertFalse(k.comesBefore(k));
 
-        Huffman.HuffmanTree a = new Huffman.HuffmanTree.HuffmanLeaf(3, 'a');
-        Huffman.HuffmanTree b = new Huffman.HuffmanTree.HuffmanLeaf(10, 'b');
+        HuffmanTree a = new HuffmanLeaf(3, 'a');
+        HuffmanTree b = new HuffmanLeaf(10, 'b');
         assertTrue(a.comesBefore(b));
     }
 
     @Test
     public void combineTest() {
-        Huffman.HuffmanTree d = new Huffman.HuffmanTree.HuffmanLeaf(5, 'd');
-        Huffman.HuffmanTree k = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
+        HuffmanTree d = new HuffmanLeaf(5, 'd');
+        HuffmanTree k = new HuffmanLeaf(5, 'k');
         assertEquals(k.combine(d),d.combine(k));
-        Huffman.HuffmanTree k2 = new Huffman.HuffmanTree.HuffmanLeaf(5, 'k');
+        HuffmanTree k2 = new HuffmanLeaf(5, 'k');
         assertEquals(k.combine(k2),k2.combine(k));
     }
-
+    @Test
+    public void dumbHeapTest() {
+        Random rand = new Random("CSC-2001-Data-Structures".hashCode());
+        Huffman.HQueue testQueue = new Huffman.HQueue.HuffmanArrayHeap();
+        for (int i = 0; i < 1000000; i++) {
+            testQueue.enqueue(new HuffmanLeaf(rand.nextInt(256), rand.nextInt(256)));
+        }
+        assertFalse(testQueue.isEmpty());
+        while (testQueue.count() > 1) {
+            assertTrue(testQueue.dequeue().compareTo(testQueue.peek()) <= 0,Integer.toString(testQueue.count()));
+        }
+        testQueue.dequeue();
+        assertTrue(testQueue.isEmpty());
+        assertThrows(NoSuchElementException.class, testQueue::peek);
+        assertThrows(NoSuchElementException.class, testQueue::dequeue);
+    }
 
     /**
      * Compares two files line by line, trimming trailing CR/LF so the
