@@ -26,8 +26,8 @@ public class HuffmanTest {
 
     @Test
     public void testComesBefore() {
-        HuffmanLeaf d = new HuffmanLeaf(5, 'd');
-        HuffmanLeaf k = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanLeaf d = new Huffman.HuffmanLeaf(5, 'd');
+        Huffman.HuffmanLeaf k = new Huffman.HuffmanLeaf(5, 'k');
         assertTrue(d.comesBefore(k));
         assertFalse(k.comesBefore(d));
     }
@@ -91,22 +91,22 @@ public class HuffmanTest {
 
     @Test
     public void HuffmanNodeTest() {
-        HuffmanTree d = new HuffmanLeaf(5, 'd');
-        HuffmanTree k = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanTree d = new Huffman.HuffmanLeaf(5, 'd');
+        Huffman.HuffmanTree k = new Huffman.HuffmanLeaf(5, 'k');
         assertTrue(d.comesBefore(k));
         assertFalse(k.comesBefore(k));
 
-        HuffmanTree a = new HuffmanLeaf(3, 'a');
-        HuffmanTree b = new HuffmanLeaf(10, 'b');
+        Huffman.HuffmanTree a = new Huffman.HuffmanLeaf(3, 'a');
+        Huffman.HuffmanTree b = new Huffman.HuffmanLeaf(10, 'b');
         assertTrue(a.comesBefore(b));
     }
 
     @Test
     public void combineTest() {
-        HuffmanTree d = new HuffmanLeaf(5, 'd');
-        HuffmanTree k = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanTree d = new Huffman.HuffmanLeaf(5, 'd');
+        Huffman.HuffmanTree k = new Huffman.HuffmanLeaf(5, 'k');
         assertEquals(k.combine(d),d.combine(k));
-        HuffmanTree k2 = new HuffmanLeaf(5, 'k');
+        Huffman.HuffmanTree k2 = new Huffman.HuffmanLeaf(5, 'k');
         assertEquals(k.combine(k2),k2.combine(k));
     }
     @Test
@@ -114,7 +114,7 @@ public class HuffmanTest {
         Random rand = new Random("CSC-2001-Data-Structures".hashCode());
         Huffman.HQueue testQueue = new Huffman.HQueue.HuffmanArrayHeap();
         for (int i = 0; i < 1000000; i++) {
-            testQueue.enqueue(new HuffmanLeaf(rand.nextInt(256), rand.nextInt(256)));
+            testQueue.enqueue(new Huffman.HuffmanLeaf(rand.nextInt(256), rand.nextInt(256)));
         }
         assertFalse(testQueue.isEmpty());
         while (testQueue.count() > 1) {
